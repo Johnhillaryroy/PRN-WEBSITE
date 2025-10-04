@@ -908,6 +908,59 @@ Pin - 691601</p>
    <script src="./assets/js/vendors/scrollcue.js"></script>
 
 
+<script>
+(function(){
+  try {
+    // remove saved preference that might force dark
+    try { localStorage.removeItem('site-theme'); } catch(e){}
+
+    // force light attributes
+    document.documentElement.setAttribute('data-bs-theme', 'light');
+    document.documentElement.setAttribute('data-theme', 'light'); // in case other CSS reads this
+    if (document.documentElement.style) document.documentElement.style.colorScheme = 'light';
+
+    // remove common dark classes from html/body (theme libraries often add these)
+    ['dark','theme-dark','bs-theme-dark'].forEach(c=>{
+      document.documentElement.classList.remove(c);
+      document.body && document.body.classList.remove(c);
+    });
+
+    // small CSS override so colors are visibly light if some CSS still applies dark styles
+    const style = document.createElement('style');
+    style.id = 'force-light-style';
+    style.textContent = `
+      :root { color-scheme: light; }
+      html, body { background-color: white !important; color: #111 !important; }
+      [data-bs-theme="dark"], .dark, .theme-dark { background: unset !important; color: unset !important; }
+    `;
+    document.head.appendChild(style);
+
+    // guard against other scripts changing the attributes — revert immediately
+    const obs = new MutationObserver(mutations => {
+      const cur = document.documentElement.getAttribute('data-bs-theme');
+      if (cur !== 'light') {
+        document.documentElement.setAttribute('data-bs-theme', 'light');
+      }
+      const cur2 = document.documentElement.getAttribute('data-theme');
+      if (cur2 !== 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+      // remove classes if re-added
+      ['dark','theme-dark','bs-theme-dark'].forEach(c=>{
+        if (document.documentElement.classList.contains(c)) document.documentElement.classList.remove(c);
+        if (document.body && document.body.classList.contains(c)) document.body.classList.remove(c);
+      });
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-bs-theme','data-theme','class'] });
+    // stop observing after 20s (safety) — theme scripts will have run by then
+    setTimeout(()=>obs.disconnect(), 20000);
+
+    console.info('Light mode enforced by user script.');
+  } catch (err) {
+    console.error('Force-light script failed', err);
+  }
+})();
+</script>
 
 
 
