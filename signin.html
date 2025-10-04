@@ -15,8 +15,8 @@
    <link rel="shortcut icon" href=".assets/images/college/download.png"">
    <meta name="msapplication-TileColor" content="#8b3dff">
    <meta name="msapplication-config" content="assets/images/college/download.png"
-  
-  
+   <!-- Color modes -->
+   <script src="./assets/js/vendors/color-modes.js"></script>
 
    <!-- Libs CSS -->
    <link href="./assets/libs/simplebar/dist/simplebar.min.css" rel="stylesheet">
@@ -29,7 +29,7 @@
    <link rel="stylesheet" href="./assets/fonts/css/boxicons.min.css">
 
    <!-- Theme CSS -->
-   <link rel="stylesheet" href="./assets/css/theme.min.css"> 
+   <link rel="stylesheet" href="./assets/css/theme.min.css">
    <title>Sign In - Responsive Website Template | Block</title>
 </head>
 
@@ -113,92 +113,11 @@
    <script src="./assets/libs/simplebar/dist/simplebar.min.js"></script>
    <script src="./assets/libs/headhesive/dist/headhesive.min.js"></script>
 
-   <!-- Theme JS  -->
+   <!-- Theme JS -->
    <script src="./assets/js/theme.min.js"></script>
 
 
    <script src="./assets/js/vendors/password.js"></script>
-
-
-   
-
-
-   <script>
-(function(){
-  try {
-    // remove stored prefs that might force dark
-    try { localStorage.removeItem('site-theme'); } catch(e){}
-    try { localStorage.removeItem('theme'); } catch(e){}
-    try { localStorage.removeItem('color-mode'); } catch(e){}
-
-    // Ensure attribute set
-    document.documentElement.setAttribute('data-bs-theme','light');
-    document.documentElement.setAttribute('data-theme','light');
-    if (document.documentElement.style) document.documentElement.style.colorScheme = 'light';
-
-    // remove known dark classes
-    ['dark','theme-dark','bs-theme-dark','mode-dark','is-dark'].forEach(c=>{
-      document.documentElement.classList.remove(c);
-      if (document.body) document.body.classList.remove(c);
-    });
-
-    // Very strong CSS overrides to defeat dark theme rules and prefers-color-scheme
-    const css = `
-      /* Force light color-scheme */
-      :root { color-scheme: light !important; }
-      html, body, header, main, footer, nav, section, .card, .container, .card-body {
-        background-color: #fff !important;
-        color: #111 !important;
-        -webkit-text-fill-color: #111 !important;
-      }
-      /* override links/buttons */
-      a, .btn, button { color: initial !important; }
-      /* override elements that libraries often invert */
-      img, svg, video { filter: none !important; background: transparent !important; }
-      /* defeat prefers-color-scheme dark rules by making those selectors weaker */
-      @media (prefers-color-scheme: dark) {
-        html, body, header, main, footer, nav, section, .card, .container, .card-body {
-          background-color: #fff !important;
-          color: #111 !important;
-        }
-      }
-      /* remove any dark-theme prefixed attributes */
-      [data-bs-theme="dark"], [data-theme="dark"], .dark, .theme-dark, .mode-dark, .is-dark {
-        background: #fff !important;
-        color: #111 !important;
-      }
-      /* make sure text contrast is visible */
-      * { caret-color: auto !important; }
-    `;
-    const style = document.createElement('style');
-    style.id = 'super-force-light';
-    style.appendChild(document.createTextNode(css));
-    document.head.appendChild(style);
-
-    // Guard: if anything tries to change the attribute, revert and log caller
-    const origSet = Element.prototype.setAttribute;
-    Element.prototype.setAttribute = function(name, value) {
-      try {
-        if (this === document.documentElement && (name === 'data-bs-theme' || name === 'data-theme')) {
-          // log stack once for debugging
-          console.warn('Blocked attempt to change', name, 'to', value);
-          // print small stack to Console
-          console.log(new Error().stack.split('\\n').slice(2,7).join('\\n'));
-          // enforce light
-          return origSet.call(this, name, 'light');
-        }
-      } catch (e) { /* ignore */ }
-      return origSet.call(this, name, value);
-    };
-
-    console.info('Super force-light installed. Page should render light now.');
-  } catch (err) {
-    console.error('super-force-light failed', err);
-  }
-})();
-</script>
-
-
 </body>
 
 </html>
