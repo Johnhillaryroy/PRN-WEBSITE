@@ -26,8 +26,8 @@
    <!-- Box icons -->
    <link rel="stylesheet" href="./assets/fonts/css/boxicons.min.css">
 
-   <!-- Theme CSS -->
-   <link rel="stylesheet" href="./assets/css/theme.min.css">
+   <!-- Theme CSS 
+   <link rel="stylesheet" href="./assets/css/theme.min.css"> -->
    <title>Sign Up - Responsive Website Template | Block</title>
 </head>
 
@@ -131,6 +131,58 @@
  
 
    <script src="./assets/js/vendors/password.js"></script>
+
+
+   <script>
+(function(){
+  try {
+    // remove saved preference keys that may force dark
+    try { localStorage.removeItem('site-theme'); } catch(e){}
+    try { localStorage.removeItem('theme'); } catch(e){}
+    try { localStorage.removeItem('color-mode'); } catch(e){}
+
+    // force the light attributes
+    document.documentElement.setAttribute('data-bs-theme','light');
+    document.documentElement.setAttribute('data-theme','light');
+    if (document.documentElement.style) document.documentElement.style.colorScheme = 'light';
+
+    // remove known dark classes that theme libs add
+    ['dark','theme-dark','bs-theme-dark','mode-dark'].forEach(c=>{
+      document.documentElement.classList.remove(c);
+      if (document.body) document.body.classList.remove(c);
+    });
+
+    // add a small, high-specificity css override so dark CSS can't hide colors
+    const style = document.createElement('style');
+    style.id = 'force-light-override';
+    style.textContent = `
+      :root{ color-scheme: light !important; }
+      html, body { background-color: white !important; color: #111 !important; }
+      [data-bs-theme="dark"], .dark, .theme-dark, .mode-dark { background: unset !important; color: unset !important; }
+    `;
+    document.head.appendChild(style);
+
+    // watch for scripts trying to flip theme and revert immediately (for 20s)
+    const obs = new MutationObserver(()=> {
+      if (document.documentElement.getAttribute('data-bs-theme') !== 'light') {
+        document.documentElement.setAttribute('data-bs-theme','light');
+      }
+      if (document.documentElement.getAttribute('data-theme') !== 'light') {
+        document.documentElement.setAttribute('data-theme','light');
+      }
+      ['dark','theme-dark','bs-theme-dark','mode-dark'].forEach(c=>{
+        if (document.documentElement.classList.contains(c)) document.documentElement.classList.remove(c);
+        if (document.body && document.body.classList.contains(c)) document.body.classList.remove(c);
+      });
+    });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-bs-theme','data-theme','class'] });
+    setTimeout(()=>obs.disconnect(), 20000);
+
+    console.info('Light mode forced by script.');
+  } catch(err){ console.error('Force-light error',err); }
+})();
+</script>
+
 </body>
 
 </html>
